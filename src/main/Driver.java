@@ -1,3 +1,9 @@
+package main;
+
+import controllers.NewsFeed;
+import models.MessagePost;
+import utils.ScannerInput;
+
 public class Driver {
 
     private NewsFeed newsFeed = new NewsFeed();
@@ -19,6 +25,9 @@ public class Driver {
                   3) Update a Message Post
                   4) Delete a Message Post
                   ---------------------
+                  5) Save Posts
+                  6) Load Posts
+                  ---------------------
                   0) Exit
                ==>>  """);
     }
@@ -33,6 +42,8 @@ public class Driver {
                 case 2 -> showPosts();
                 case 3 -> updateMessagePost();
                 case 4 -> deleteMessagePost();
+                case 5 -> savePosts();
+                case 6 -> loadPosts();
                 default -> System.out.println("Invalid option entered: " + option);
             }
 
@@ -81,7 +92,7 @@ public class Driver {
                 String message = ScannerInput.readNextLine("Enter the Message:  ");
 
                 //pass the index of the product and the new product details to Store for updating and check for success.
-                if (newsFeed.updateMessagePost(indexToUpdate, new MessagePost(author, message))){
+                if (newsFeed.updateMessagePost(indexToUpdate, author, message)){
                     System.out.println("Update Successful");
                 }
                 else{
@@ -99,7 +110,7 @@ public class Driver {
         if (newsFeed.numberOfPosts() > 0){
             //only ask the user to choose the message post to delete if posts exist
             int indexToDelete = ScannerInput.readNextInt("Enter the index of the messgae post to delete ==> ");
-            //pass the index of the message post to NewsFeed for deleting and check for success.
+            //pass the index of the message post to controllers.NewsFeed for deleting and check for success.
             MessagePost messagePostToDelete = newsFeed.deleteMessagePost(indexToDelete);
             if (messagePostToDelete != null){
                 System.out.println("Delete Successful! Deleted message post: " + messagePostToDelete.display());
@@ -107,6 +118,24 @@ public class Driver {
             else{
                 System.out.println("Delete NOT Successful");
             }
+        }
+    }
+
+    //save all the posts in the newsFeed to a file on the hard disk
+    private void savePosts() {
+        try {
+            newsFeed.save();
+        } catch (Exception e) {
+            System.err.println("Error writing to file: " + e);
+        }
+    }
+
+    //load all the posts into the newsFeed from a file on the hard disk
+    private void loadPosts() {
+        try {
+            newsFeed.load();
+        } catch (Exception e) {
+            System.err.println("Error reading from file: " + e);
         }
     }
 
